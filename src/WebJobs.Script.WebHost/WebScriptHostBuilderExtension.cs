@@ -41,6 +41,7 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost
                     services.ConfigureOptions<HostHstsOptionsSetup>();
                     services.ConfigureOptions<HostCorsOptionsSetup>();
                     services.ConfigureOptions<CorsOptionsSetup>();
+                    services.ConfigureOptions<HostEasyAuthOptionsSetup>();
                 })
                 .AddScriptHost(webHostOptions, configLoggerFactory, metricsLogger, webJobsBuilder =>
                 {
@@ -91,6 +92,7 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost
                     {
                         services.AddSingleton<ICorsMiddlewareFactory, CorsMiddlewareFactory>();
                         services.TryAddEnumerable(ServiceDescriptor.Singleton<IJobHostHttpMiddleware, JobHostCorsMiddleware>());
+                        services.TryAddEnumerable(ServiceDescriptor.Singleton<IJobHostHttpMiddleware, JobHostEasyAuthMiddleware>());
                     }
                     services.TryAddSingleton<IScaleMetricsRepository, TableStorageScaleMetricsRepository>();
 
