@@ -13,9 +13,5 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Configuration
         public bool SiteAuthEnabled { get; set; }
 
         public string SiteAuthClientId { get; set; }
-
-        public bool? SiteAuthAutoProvisioned { get; set; }
-
-        public bool IsEnabled { get; set; }
     }
 }

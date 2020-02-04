@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.WebJobs.Script.WebHost.Configuration
 {
+    // TODO - might not need this class (depending on whether middleware reads from env vars or not)
     public class HostEasyAuthOptionsSetup : IConfigureOptions<HostEasyAuthOptions>
     {
         private readonly IEnvironment _env;
@@ -24,7 +25,9 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Configuration
 
         public void Configure(HostEasyAuthOptions options)
         {
-            // TODO - confirm that this will only be for linux consumption/check here?
+            options.SiteAuthEnabled = Convert.ToBoolean(_env.GetEnvironmentVariable(EnvironmentSettingNames.EasyAuthEnabled));
+            options.SiteAuthClientId = _env.GetEnvironmentVariable(EnvironmentSettingNames.EasyAuthClientId);
+            // TODO - host.json, can't rely. What exactly does this code do? delete?
             IConfigurationSection jobHostSection = _configuration.GetSection(ConfigurationSectionNames.JobHost);
             var easyAuthSection = jobHostSection.GetSection(ConfigurationSectionNames.EasyAuth);
             easyAuthSection.Bind(options);

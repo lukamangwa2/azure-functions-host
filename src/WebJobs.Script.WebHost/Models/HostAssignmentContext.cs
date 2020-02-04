@@ -128,9 +128,12 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Models
 
             if (EasyAuthSettings != null)
             {
-                environment.SetEnvironmentVariable(EnvironmentSettingNames.EasyAuthEnabled, EasyAuthSettings.SiteAuthEnabled.ToString()); // TODO - confirm this is the appsetting vs the site config value? bc appsetting will override
-                environment.SetEnvironmentVariable(EnvironmentSettingNames.WebsiteAuthClientId, EasyAuthSettings.SiteAuthClientId);
-                // TODO - do we need SiteAuthAutoProvisioned as well? If no, remove from EasyAuthSettings.cs.
+                // App settings take precedence over site config for easy auth enabled.
+                if (environment.GetEnvironmentVariable(EnvironmentSettingNames.EasyAuthEnabled) == null)
+                {
+                    environment.SetEnvironmentVariable(EnvironmentSettingNames.EasyAuthEnabled, EasyAuthSettings.SiteAuthEnabled.ToString());
+                }
+                environment.SetEnvironmentVariable(EnvironmentSettingNames.EasyAuthClientId, EasyAuthSettings.SiteAuthClientId);
             }
         }
     }

@@ -1,12 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.AppService.Middleware.AspNetCoreMiddleware;
 using Microsoft.Azure.WebJobs.Script.Middleware;
 using Microsoft.Azure.WebJobs.Script.WebHost.Configuration;
+using Microsoft.Azure.WebJobs.Script.WebHost.Models;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.WebJobs.Script.WebHost.Middleware
@@ -15,7 +17,7 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Middleware
     {
         private RequestDelegate _invoke;
 
-        public JobHostEasyAuthMiddleware(IOptions<HostEasyAuthOptions> hostEasyAuthOptions)
+        public JobHostEasyAuthMiddleware(IOptions<HostEasyAuthOptions> hostEasyAuthOptions) // TODO - remove options and directly pass in the easyauthsettings?
         {
             RequestDelegate contextNext = async context =>
             {
@@ -24,13 +26,11 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Middleware
                     await next(context);
                 }
             };
-            //if easyauth is enabled, add those config values and add the middleware
-            if (hostEasyAuthOptions.Value.IsEnabled)
+            if (hostEasyAuthOptions.Value.SiteAuthEnabled)
             {
                 var easyAuthMiddleware = new AppServiceMiddleware(contextNext);
                 _invoke = easyAuthMiddleware.InvokeAsync;
             }
-            // if not enabled, invoke without the middleware
             else
             {
                 _invoke = contextNext;
